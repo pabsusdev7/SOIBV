@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+
+    <ui:define name="titulo">Responsabilidades</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{asignacionesBeanAuto.resps}" var="resp" rowKey="#{resp.codResponsabilidad}"  
+                     selection="#{asignacionesBeanAuto.respSeleccionado}" selectionMode="single" rendered="#{not (asignacionesBeanAuto.enRegistro or asignacionesBeanAuto.enEdicion)}"
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{asignacionesBeanAuto.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{asignacionesBeanAuto.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de Responsabilidades
+            </f:facet>
+            <p:column headerText="Responsabilidad">
+                #{resp.descripcionResponsabilidad}
+            </p:column>
+            <p:column headerText="Fecha">
+                #{resp.fechaResponsabilidadtxt}
+            </p:column>
+            <p:column headerText="Detalle">
+                #{resp.detalleResponsabilidad}
+            </p:column>
+
+
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{asignacionesBeanAuto.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                
+                <p:commandButton value="Eliminar" actionListener="#{asignacionesBeanAuto.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+
+        <p:panel id="panelNuevo" header="Creación/Modificación de Responsabilidades" rendered="#{(asignacionesBeanAuto.enRegistro or asignacionesBeanAuto.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="responsabilidad" value="Responsabilidad:"/>
+                <p:inputText id="responsabilidad" value="#{asignacionesBeanAuto.resp.descripcionResponsabilidad}" required="true" label="Cédula" />
+
+                <p:message for="responsabilidad" />
+
+                <p:outputLabel for="fecha" value="Fecha:"/>
+                <p:calendar id="fecha"  value="#{asignacionesBeanAuto.resp.fechaResponsabilidad}" required="true" label="Nombre" pattern="MM/dd/yyyy HH:mm"/>
+
+                <p:message for="fecha" />
+
+                <p:outputLabel for="detalle" value="Detalle:"/>
+                <p:inputTextarea id="detalle" value="#{asignacionesBeanAuto.resp.detalleResponsabilidad}" required="true" />
+                <p:message for="detalle" />
+
+                <p:outputLabel for="min" value="Ministerio:"/>
+                <p:selectOneMenu id="min" value="#{asignacionesBeanAuto.cmin}" effect="fade" required="true" >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{asignacionesBeanAuto.lmin}" var="mins" itemLabel="#{mins.nombreMinisterio}" itemValue="#{mins.codMinisterio}"/> 
+                </p:selectOneMenu> 
+                <p:message for="min" />
+                
+                <p:outputLabel for="numero" value="Número de Asignados:"/>
+                <p:inputText id="numero" value="#{asignacionesBeanAuto.num}" required="true">
+                    
+                </p:inputText>
+                <p:message for="numero" />
+
+
+
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{asignacionesBeanAuto.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{asignacionesBeanAuto.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+
+
+    </ui:define>
+
+</ui:composition>

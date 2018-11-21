@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+   
+    <ui:define name="titulo">Grupos de Poder</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{gDPsBean.gruposPoder}" var="gp" rowKey="#{gp.codGrupoPoder}"  
+                     selection="#{gDPsBean.gps}" selectionMode="single" rendered="#{not (gDPsBean.enRegistro or gDPsBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{gDPsBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{gDPsBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de GDPs
+            </f:facet>
+            <p:column headerText="Líder">
+                #{gp.codLider.codMiembro.nombreMiembro}
+            </p:column>
+            <p:column headerText="Día Reunión">
+                #{gp.diareunion}
+            </p:column>
+            <p:column headerText="Hora Reunión">
+                #{gp.horareuniontxt}
+            </p:column>
+            <p:column headerText="Dirección">
+                #{gp.direccionGrupoPoder}
+            </p:column>
+            
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{gDPsBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{gDPsBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{gDPsBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+        
+        <p:panel id="panelNuevo" header="Creacion/Modificación de Grupos de Poder" rendered="#{(gDPsBean.enRegistro or gDPsBean.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="lider" value="Líder"/>
+                <p:selectOneMenu id="lider" value="#{gDPsBean.ccol}" effect="fade" required="true" disabled="#{gDPsBean.enEdicion}">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{gDPsBean.cols}" var="cols" itemLabel="#{cols.codMiembro.nombreMiembro}" itemValue="#{cols.codColaborador}"/> 
+                </p:selectOneMenu> 
+                <p:message for="lider" />
+                
+                <p:outputLabel for="dia" value="Día Reunión:"/>
+                <p:selectOneMenu value="#{gDPsBean.gp.diareunion}" id="dia" required="false">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Lunes" itemValue="Lunes" />  
+                    <f:selectItem itemLabel="Martes" itemValue="Martes" />  
+                    <f:selectItem itemLabel="Miércoles" itemValue="Miércoles" />  
+                    <f:selectItem itemLabel="Jueves" itemValue="Jueves" />  
+                    <f:selectItem itemLabel="Viernes" itemValue="Viernes" />  
+                    <f:selectItem itemLabel="Sábado" itemValue="Sábado" />  
+                    <f:selectItem itemLabel="Domingo" itemValue="Domingo" />  
+                </p:selectOneMenu>    
+                <p:message for="dia" />
+                
+                <p:outputLabel for="hora" value="Hora Reunión:"/>
+                <p:calendar id="hora" value="#{gDPsBean.gp.horareunion}" required="false" label="Fecha Nacimiento" pattern="HH:mm" timeOnly="true"/>
+                <p:message for="hora" />
+                
+                <p:outputLabel for="direccion" value="Dirección:"/>
+                <p:inputTextarea id="direccion" value="#{gDPsBean.gp.direccionGrupoPoder}" required="false"/>
+                <p:message for="direccion" />
+                
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{gDPsBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{gDPsBean.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+    
+        
+   </ui:define>
+
+</ui:composition>

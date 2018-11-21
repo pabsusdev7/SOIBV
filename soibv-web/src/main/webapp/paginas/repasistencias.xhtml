@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+
+    <ui:define name="titulo">Reporte Asistencias</ui:define>
+
+    <ui:define name="contenido">
+   
+            <p:dataTable id="tabla" value="#{repAsistenciasBean.rasistencia}" var="asi" rowKey="#{asi.codAsistencia}"  
+                         selection="#{repAsistenciasBean.as}" selectionMode="single" rendered="#{repAsistenciasBean.enGenReporte}"
+                         >
+                <p:ajax event="rowSelect" listener="#{repAsistenciasBean.filaSeleccionada(evento)}" update="tabla"/>
+                <p:ajax event="rowUnselect" listener="#{repAsistenciasBean.filaSeleccionada(evento)}" update="tabla"/>
+                <f:facet name="header">
+                    Reporte de Asistencias
+                </f:facet>
+                
+                <p:column headerText="Código">
+                    #{asi.codAsistencia.toString()}
+                </p:column>
+                <p:column headerText="Fecha">
+                    #{asi.fechaAsistenciatxt}
+                </p:column>
+                <p:column headerText="Adultos">
+                    #{asi.numAdultos.toString()}
+                    <f:facet name="footer">  
+                        #{repAsistenciasBean.spadultos} Adultos.  
+                    </f:facet>
+                </p:column>
+                <p:column headerText="Niños">
+                    #{asi.numNinos.toString()}
+                    <f:facet name="footer">  
+                        #{repAsistenciasBean.spninos} Niños.  
+                    </f:facet>
+                </p:column>
+                <p:column headerText="Jóvenes">
+                    #{asi.numJovenes.toString()}
+                    <f:facet name="footer">  
+                        #{repAsistenciasBean.spjovenes} Jóvenes.  
+                    </f:facet>
+                </p:column>
+                <p:column headerText="Nuevos">
+                    #{asi.totalAsistencia.toString()}
+                    <f:facet name="footer">  
+                        #{repAsistenciasBean.spnuevos} Nuevos.  
+                    </f:facet>
+                </p:column>
+
+                <p:column headerText="Total">
+                    #{(asi.numAdultos+asi.numNinos+asi.numJovenes)}
+                </p:column>
+
+                <f:facet name="footer">  
+                    El promedio total es de #{repAsistenciasBean.sptotal} asistentes por evento de #{repAsistenciasBean.finiciotxt} a #{repAsistenciasBean.ffintxt}.  
+                </f:facet>  
+            </p:dataTable>
+
+        <p:commandButton value="Imprimir" type="button" style="margin-top: 50px;margin-left: 395px"  rendered="#{repAsistenciasBean.enGenReporte}">  
+                <p:printer target="tabla"/>  
+            </p:commandButton> 
+
+
+            <p:panel id="panelNuevo" header="Creación de Reportes de Asistencia" rendered="#{not(repAsistenciasBean.enGenReporte)}">
+                <p:panelGrid columns="3">
+
+
+                    <p:outputLabel for="fechai" value="Fecha Inicio:"/>
+                    <p:calendar id="fechai"  value="#{repAsistenciasBean.finicio}" required="true" label="Nombre" pattern="MM/dd/yyyy"/>
+
+                    <p:message for="fechai" />
+
+                    <p:outputLabel for="fechaf" value="Fecha Fin:"/>
+                    <p:calendar id="fechaf"  value="#{repAsistenciasBean.ffin}" required="true" label="Nombre" pattern="MM/dd/yyyy"/>
+
+                    <p:message for="fechaf" />
+
+                    <p:outputLabel for="tipo" value="Tipo Reunión:"/>
+                    <p:selectOneMenu value="#{repAsistenciasBean.tipo}" id="tipo" required="true">  
+                        <f:selectItem itemLabel="Select One" itemValue="" />  
+                        <f:selectItem itemLabel="Culto Dominical" itemValue="Culto Dominical" />  
+                        <f:selectItem itemLabel="Culto de Oración" itemValue="Culto de Oración" />  
+                        <f:selectItem itemLabel="Culto de Jóvenes" itemValue="Culto de Jóvenes" />  
+                        <f:selectItem itemLabel="Otros" itemValue="Otros" />  
+
+                    </p:selectOneMenu>    
+                    <p:message for="tipo" />
+
+
+
+
+                </p:panelGrid>
+                <p:commandButton value="Aceptar" actionListener="#{repAsistenciasBean.aceptar(evento)}" update="@form"/>
+
+            </p:panel>    
+
+
+       
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+
+    <ui:define name="titulo">Usuarios</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{usuariosBean.usuarios}" var="usuario" rowKey="#{usuario.codUsuario}"  
+                     selection="#{usuariosBean.usuarioSeleccionado}" selectionMode="single" rendered="#{not (usuariosBean.enRegistro or usuariosBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{usuariosBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{usuariosBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de Usuarios
+            </f:facet>
+            <p:column headerText="Cédula Colaborador">
+                #{usuario.codColaborador.codMiembro.cedulaMiembro}
+            </p:column>
+            <p:column headerText="Nombre">
+                #{usuario.codColaborador.codMiembro.nombreMiembro}
+            </p:column>
+            <p:column headerText="Perfil de Usuario">
+                #{usuario.codTipoUsuario.nombreTipoUsuario}
+            </p:column>
+            <p:column headerText="Nombre Usuario">
+                #{usuario.nombreUsuario}
+            </p:column>
+            <p:column headerText="Contraseña">
+                #{usuario.contrasenaUsuario}
+            </p:column>
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{usuariosBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{usuariosBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{usuariosBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+
+        <p:panel id="panelNuevo" header="Creacion/Modificación de Usuarios" rendered="#{(usuariosBean.enRegistro or usuariosBean.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="colaborador" value="Colaborador:"/>
+                <p:selectOneMenu id="colaborador" value="#{usuariosBean.ccol}" effect="fade" required="true" disabled="#{(usuariosBean.enEdicion)}">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{usuariosBean.colaboradores}" var="cols" itemLabel="#{cols.codMiembro.nombreMiembro}" itemValue="#{cols.codColaborador}"/> 
+                </p:selectOneMenu> 
+                <p:message for="colaborador" />
+
+                <h:outputLabel for="perfil" value="Perfil: " />  
+                <p:selectOneMenu id="perfil" value="#{usuariosBean.ctu}" effect="fade" >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{usuariosBean.tiposusuario}" var="tiposu" itemLabel="#{tiposu.nombreTipoUsuario}" itemValue="#{tiposu.codTipoUsuario}"/> 
+                </p:selectOneMenu> 
+                <p:message for="perfil" />
+
+                <p:outputLabel for="nombreu" value="Nombre Usuario:"/>
+                <p:inputText id="nombreu" value="#{usuariosBean.usuario.nombreUsuario}" required="true" label="Fecha Nacimiento" />
+             
+                <p:message for="nombreu" />
+
+                <p:outputLabel for="contrasena" value="Contraseña:"/>
+                <p:password id="contrasena" value="#{usuariosBean.usuario.contrasenaUsuario}" required="true" label="Fecha Nacimiento" feedback="true"/>
+                <p:message for="contrasena" />
+
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{usuariosBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{usuariosBean.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+
+
+    </ui:define>
+
+</ui:composition>

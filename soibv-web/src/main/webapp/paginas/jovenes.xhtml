@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla_ark_dgt.xhtml">
+
+
+    <ui:define name="titulo">Jóvenes</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{jovenesBean.miembros}" var="miembro" widgetVar="mbmsf" rowKey="#{miembro.codMiembro}"  
+                     selection="#{jovenesBean.miembroSeleccionado}" selectionMode="single" rendered="#{not (jovenesBean.enRegistro or jovenesBean.enEdicion or jovenesBean.enFoto)}"
+                     emptyMessage="No hay miembros que se ajusten al criterio buscado" filteredValue="#{jovenesBean.miembrosfilt}"
+                     paginator="true" rows="15"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15" style="font-size:8px;">
+            <p:ajax event="rowSelect" listener="#{jovenesBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{jovenesBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de Jóvenes
+                <p:outputPanel style="margin-left: 300px">  
+                <h:outputText value="Buscar:" />  
+                <p:inputText id="globalFilter" onkeyup="mbmsf.filter()" style="width:150px" />  
+                </p:outputPanel> 
+            </f:facet>
+            <p:column headerText="Código" >
+                #{miembro.codMiembro}
+            </p:column>
+            <p:column headerText="Cédula" >
+                #{miembro.cedulaMiembro}
+            </p:column>
+            <p:column headerText="Nombre" >
+                #{miembro.nombreMiembro}
+            </p:column>
+            <p:column headerText="Género">
+                #{miembro.generoJov}
+            </p:column>
+            <p:column headerText="Edad">
+                #{miembro.edadjov}
+            </p:column>
+            <p:column headerText="Fecha Nacimiento">
+                #{miembro.fechanacMiembrotxt}
+            </p:column>
+            <p:column headerText="Nivel de Instrucción">
+                #{miembro.educJov}
+            </p:column>
+            <p:column headerText="Ministerio Seleccionado">
+                #{miembro.minJov}
+            </p:column>
+            <p:column headerText="Pasatiempo">
+                #{miembro.pasJov}
+            </p:column>
+            <p:column headerText="Sector Domicilio">
+                #{miembro.secJov}
+            </p:column>
+            <p:column headerText="Teléf. Convencional">
+                #{miembro.telfcasaMiembro}
+            </p:column>
+            <p:column headerText="Teléf. Móvil">
+                #{miembro.celularMiembro}
+            </p:column>
+            <p:column headerText="Facebook">
+                #{miembro.fbJov}
+            </p:column>
+            <p:column headerText="Correo-e">
+                #{miembro.emailMiembro}
+            </p:column>
+            <p:column headerText="Fecha Censo">
+                #{miembro.fechaCensotxt}
+            </p:column>
+            
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{jovenesBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{jovenesBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{jovenesBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+                <p:commandButton value="Fotografía" actionListener="#{jovenesBean.foto(evento)}" update="@form" icon="ui-icon-image"/>
+            </f:facet>
+        </p:dataTable>
+        
+        
+        <p:panel id="panelNuevo" header="Creacion/Modificación de Miembros" rendered="#{(jovenesBean.enRegistro or jovenesBean.enEdicion)}">
+            <p:panelGrid columns="3">
+
+                <p:outputLabel for="codigo" value="Código:" rendered="#{jovenesBean.enEdicion}"/>
+                <p:inputText id="codigo" value="#{jovenesBean.miembro.codMiembro}" required="true" label="Cédula" readonly="#{jovenesBean.enEdicion}" rendered="#{jovenesBean.enEdicion}"/>
+                <p:message for="codigo" rendered="#{jovenesBean.enEdicion}"/>
+
+                <p:outputLabel for="cedula" value="Cédula:"/>
+                <p:inputText id="cedula" value="#{jovenesBean.miembro.cedulaMiembro}" required="true" label="Cédula">
+                    <f:validateLength maximum="10" /> 
+                </p:inputText>
+                
+                <p:message for="cedula" />
+
+                <p:outputLabel for="nombre" value="Nombre:"/>
+                <p:inputText id="nombre" value="#{jovenesBean.miembro.nombreMiembro}" required="true" label="Nombre" />
+                <p:message for="nombre" />
+                
+                <p:outputLabel for="genero" value="Género:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.generoJov}" id="genero" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Femenino" itemValue="Femenino" />  
+                    <f:selectItem itemLabel="Masculino" itemValue="Masculino" /> 
+                </p:selectOneMenu> 
+                <p:message for="genero" />
+                
+                <p:outputLabel for="edad" value="Edad:"/>
+                <p:inputText id="edad" value="#{jovenesBean.miembro.edadjov}" required="true" label="Edad" />
+                <p:message for="edad" />
+                
+                <p:outputLabel for="fechanac" value="Fecha Nacimiento:"/>
+                <p:calendar id="fechanac" value="#{jovenesBean.miembro.fechanacMiembro}" required="true" label="Fecha Nacimiento" navigator="true" />
+                <p:message for="fechanac" />
+
+                <p:outputLabel for="ecivil" value="Estado Civil:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.ecivilMiembro}" id="ecivil" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Soltero" itemValue="Soltero" />  
+                    <f:selectItem itemLabel="Casado" itemValue="Casado" />  
+                    <f:selectItem itemLabel="Divorciado" itemValue="Divorciado" />  
+                    <f:selectItem itemLabel="Viudo" itemValue="Viudo" />  
+                </p:selectOneMenu> 
+                <p:message for="ecivil" />
+
+                <p:outputLabel for="hijos" value="Hijos:"/>
+                <p:inputText id="hijos" value="#{jovenesBean.miembro.nhijosMiembro}" label="Nombre" converter="#{Integer}">
+           
+                </p:inputText>
+                <p:message for="hijos" />
+                
+                <p:outputLabel for="educ" value="Nivel de Instrucción:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.educJov}" id="educ" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Primaria" itemValue="Primaria" />  
+                    <f:selectItem itemLabel="Secundaria" itemValue="Secundaria" /> 
+                    <f:selectItem itemLabel="Superior" itemValue="Superior" />  
+                </p:selectOneMenu> 
+                <p:message for="educ" />
+
+                <p:outputLabel for="tlfcasa" value="Teléfono Domicilio:"/>
+                <p:inputText id="tlfcasa" value="#{jovenesBean.miembro.telfcasaMiembro}" label="Nombre" />
+                <p:message for="tlfcasa" />
+                
+                <p:outputLabel for="sector" value="Sector Domicilio:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.secJov}" id="sector" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Conocoto" itemValue="Conocoto" />  
+                    <f:selectItem itemLabel="Sangolquí" itemValue="Sangolquí" /> 
+                    <f:selectItem itemLabel="San Rafael" itemValue="San Rafael" />  
+                    <f:selectItem itemLabel="San Pedro" itemValue="San Pedro" />  
+                    <f:selectItem itemLabel="Amaguaña" itemValue="Amaguaña" />  
+                    <f:selectItem itemLabel="Fajardo" itemValue="Fajardo" /> 
+                    <f:selectItem itemLabel="Puente 5-9" itemValue="Puente 5-9" />  
+                    <f:selectItem itemLabel="Puente 1-5" itemValue="Puente 1-5" /> 
+                    <f:selectItem itemLabel="Quito" itemValue="Quito" />  
+                </p:selectOneMenu> 
+                <p:message for="sector" />
+
+                <p:outputLabel for="dircasa" value="Dirección Domicilio:"/>
+                <p:inputTextarea id="dircasa" value="#{jovenesBean.miembro.dircasaMiembro}" />
+                <p:message for="dircasa" />
+
+                <p:outputLabel for="tlfcel" value="Teléfono Celular:"/>
+                <p:inputText id="tlfcel" value="#{jovenesBean.miembro.celularMiembro}" label="Nombre" />
+                <p:message for="tlfcel" />
+
+                <p:outputLabel for="email" value="Correo Electrónico:"/>
+                <p:inputText id="email" value="#{jovenesBean.miembro.emailMiembro}" label="Nombre" />
+                <p:message for="email" />
+                
+                <p:outputLabel for="fb" value="Facebook:"/>
+                <p:inputText id="fb" value="#{jovenesBean.miembro.fbJov}" label="Nombre" />
+                <p:message for="fb" />
+
+                <p:outputLabel for="prof" value="Profesión:"/>
+                <p:inputText id="prof" value="#{jovenesBean.miembro.profesionMiembro}" label="Nombre" />
+                <p:message for="prof" />
+
+                <p:outputLabel for="ocp" value="Ocupación:"/>
+                <p:inputText id="ocp" value="#{jovenesBean.miembro.ocupacionMiembro}" label="Nombre" />
+                <p:message for="ocp" />
+
+                <p:outputLabel for="lgt" value="Lugar Trabajo:"/>
+                <p:inputText id="lgt" value="#{jovenesBean.miembro.lugartrabajoMiembro}" label="Nombre" />
+                <p:message for="lgt" />
+
+                <p:outputLabel for="tlt" value="Teléfono Trabajo:"/>
+                <p:inputText id="tlt" value="#{jovenesBean.miembro.telftrabajoMiembro}" label="Nombre" />
+                <p:message for="tlt" />
+
+                <p:outputLabel for="drt" value="Dirección Trabajo:"/>
+                <p:inputTextarea id="drt" value="#{jovenesBean.miembro.dirtrabajoMiembro}"  />
+                <p:message for="drt" />
+                
+                <p:outputLabel for="minjov" value="Ministerio en el que te gustaría estar:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.minJov}" id="minjov" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Integración" itemValue="Integración" />  
+                    <f:selectItem itemLabel="Enlace" itemValue="Enlace" /> 
+                    <f:selectItem itemLabel="Multimedia" itemValue="Multimedia" />  
+                    <f:selectItem itemLabel="Eventos" itemValue="Eventos" /> 
+                    <f:selectItem itemLabel="Alabanza" itemValue="Alabanza" />  
+                </p:selectOneMenu> 
+                <p:message for="minjov" />
+                
+                <p:outputLabel for="past" value="Pasatiempo:"/>
+                <p:selectOneMenu value="#{jovenesBean.miembro.pasJov}" id="past" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Deportes" itemValue="Deportes" />  
+                    <f:selectItem itemLabel="Lectura" itemValue="Lectura" /> 
+                    <f:selectItem itemLabel="Videojuegos" itemValue="Videojuegos" />  
+                    <f:selectItem itemLabel="Música" itemValue="Música" /> 
+                    <f:selectItem itemLabel="Manualidades" itemValue="Manualidades" />  
+                </p:selectOneMenu> 
+                <p:message for="past" />
+
+                <p:outputLabel for="btm" value="Bautismo en Agua:"/>
+                <p:selectOneMenu id="btm" value="#{jovenesBean.btm}" required="true" >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Sí" itemValue="1" />  
+                    <f:selectItem itemLabel="No" itemValue="0" />  
+                   
+                    </p:selectOneMenu> 
+                <p:message for="btm" />
+                
+                <p:outputLabel for="lbtm" value="Lugar Bautismo:"/>
+                <p:inputText id="lbtm" value="#{jovenesBean.miembro.lugbautismoMiembro}" label="Nombre"  />
+                <p:message for="lbtm" />
+                
+                <p:outputLabel for="min" value="Sirve en Ministerio:"/>
+                <p:selectOneMenu id="min" value="#{jovenesBean.smin}" required="true" >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Sí" itemValue="1" />  
+                    <f:selectItem itemLabel="No" itemValue="0" />  
+                    </p:selectOneMenu> 
+                <p:message for="min" />
+                
+                <p:outputLabel for="lmin" value="Ministerio:"/>
+                <p:selectManyMenu id="lmin" value="#{jovenesBean.lcodmin}">  
+                    <f:selectItems value="#{jovenesBean.ministerios}" var="mins" itemLabel="#{mins.nombreMinisterio}" itemValue="#{mins.codMinisterio}"/> 
+                    
+                </p:selectManyMenu> 
+                <p:message for="lmin" />
+                
+                <p:outputLabel for="gdp" value="Grupo de Poder:"/>
+                <p:selectOneMenu id="gdp" value="#{jovenesBean.sgdp}" required="true"  >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Sí" itemValue="1" />  
+                    <f:selectItem itemLabel="No" itemValue="0" />  
+                    </p:selectOneMenu> 
+                <p:message for="gdp" />
+                
+                <p:outputLabel for="lgdp" value="Líder:"/>
+                <p:selectOneMenu id="lgdp" value="#{jovenesBean.codgdp}" effect="fade"  >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{jovenesBean.gdps}" var="gdps" itemLabel="#{gdps.codLider.codMiembro.nombreMiembro}" itemValue="#{gdps.codGrupoPoder}"/> 
+                </p:selectOneMenu> 
+                <p:message for="lgdp" />
+                
+                <p:outputLabel for="enct" value="Encuentro:"/>
+                <p:selectOneMenu value="#{jovenesBean.enc}" required="true"  id="enct">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Sí" itemValue="1" />  
+                    <f:selectItem itemLabel="No" itemValue="0" />  
+                    </p:selectOneMenu> 
+                <p:message for="enct" />
+           
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{jovenesBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{jovenesBean.cancelar(evento)}" update="@form"/>
+        </p:panel>   
+        
+        
+        <p:panel id="foto" header="Fotografía de Miembro" rendered="#{jovenesBean.enFoto}">
+        
+        <h:panelGrid columns="1">  
+              
+            <p:effect type="puff" event="click" for="photos"/>  
+       
+        
+             
+        <p:graphicImage id="photos"  value="/paginas/imagenes/fotos/#{jovenesBean.miembro.cedulaMiembro}.jpg" />  
+       
+        
+    </h:panelGrid> 
+        <p:commandButton value="Aceptar" actionListener="#{jovenesBean.aceptarFoto(evento)}" update="@form"/>
+        
+        
+        
+        </p:panel>
+
+
+
+
+    </ui:define>
+
+</ui:composition>

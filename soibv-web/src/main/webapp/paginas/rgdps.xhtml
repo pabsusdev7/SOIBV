@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+
+    <ui:define name="titulo">Grupos de Poder</ui:define>
+
+    <ui:define name="contenido">
+   
+
+        <p:dataTable id="tabla" value="#{gDPsBean.gruposPoder}" var="gp" rowKey="#{gp.codGrupoPoder}"  
+                     selection="#{gDPsBean.gps}" selectionMode="single" rendered="#{not (gDPsBean.enRegistro or gDPsBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                     rowsPerPageTemplate="5,10,15">
+
+            <f:facet name="header">
+                Reporte Número Integrantes por Grupo de Poder
+            </f:facet>
+            <p:column headerText="Líder">
+                #{gp.codLider.codMiembro.nombreMiembro}
+            </p:column>
+
+            <p:column headerText="Integrantes">
+                #{gp.miembroList.size()}
+            </p:column>
+
+
+        </p:dataTable>
+             <p:commandButton value="Imprimir" type="button" style="margin-top: 50px;margin-left: 395px"  >  
+                <p:printer target="tabla"/>  
+            </p:commandButton> 
+
+    </ui:define>
+
+</ui:composition>

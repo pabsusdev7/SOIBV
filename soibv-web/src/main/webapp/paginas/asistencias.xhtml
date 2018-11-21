@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+   
+    <ui:define name="titulo">Registro Asistencia</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{asistenciasBean.asistencia}" var="asi" rowKey="#{asi.codAsistencia}"  
+                     selection="#{asistenciasBean.as}" selectionMode="single" rendered="#{not (asistenciasBean.enRegistro or asistenciasBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{asistenciasBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{asistenciasBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Registro de Asistencias
+            </f:facet>
+            <p:column headerText="Código">
+                #{asi.codAsistencia.toString()}
+            </p:column>
+            <p:column headerText="Fecha">
+                #{asi.fechaAsistenciatxt}
+            </p:column>
+            <p:column headerText="Adultos">
+                #{asi.numAdultos.toString()}
+            </p:column>
+            <p:column headerText="Niños">
+                #{asi.numNinos.toString()}
+            </p:column>
+            <p:column headerText="Jóvenes">
+                #{asi.numJovenes.toString()}
+            </p:column>
+            <p:column headerText="Nuevos">
+                #{asi.totalAsistencia.toString()}
+            </p:column>
+            
+            <p:column headerText="Total">
+                #{(asi.numAdultos+asi.numNinos+asi.numJovenes)}
+            </p:column>
+            
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{asistenciasBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{asistenciasBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{asistenciasBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+        
+        <p:panel id="panelNuevo" header="Creacion/Modificación de Registros de Asistencia" rendered="#{(asistenciasBean.enRegistro or asistenciasBean.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="codigo" value="Código:" rendered="#{asistenciasBean.enEdicion}"/>
+                <p:inputText id="codigo" value="#{asistenciasBean.a.codAsistencia}" required="true" label="Cédula" readonly="#{asistenciasBean.enEdicion}" rendered="#{asistenciasBean.enEdicion}"/>
+                <p:message for="codigo" rendered="#{asistenciasBean.enEdicion}"/>
+                
+               <p:outputLabel for="fecha" value="Fecha:"/>
+               <p:calendar id="fecha"  value="#{asistenciasBean.a.fechaAsistencia}" required="true" label="Nombre" pattern="MM/dd/yyyy HH:mm"/>
+
+                <p:message for="fecha" />
+                
+                <p:outputLabel for="tipo" value="Tipo Reunión:"/>
+                <p:selectOneMenu value="#{asistenciasBean.a.tipoEvento}" id="tipo" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Culto Dominical" itemValue="Culto Dominical" />  
+                    <f:selectItem itemLabel="Culto de Oración" itemValue="Culto de Oración" />  
+                    <f:selectItem itemLabel="Culto de Jóvenes" itemValue="Culto de Jóvenes" />  
+                    <f:selectItem itemLabel="Otros" itemValue="Otros" />  
+                    
+                </p:selectOneMenu>    
+                <p:message for="tipo" />
+                
+                
+                
+                <p:outputLabel for="adultos" value="Número Adultos:"/>
+                <p:inputText id="adultos" value="#{asistenciasBean.a.numAdultos}" required="true"/>
+                <p:message for="adultos" />
+                
+                 <p:outputLabel for="ninos" value="Número Niños:"/>
+                 <p:inputText id="ninos" value="#{asistenciasBean.a.numNinos}" required="true"/>
+                <p:message for="ninos" />
+                
+                 <p:outputLabel for="jov" value="Número Jóvenes:"/>
+                 <p:inputText id="jov" value="#{asistenciasBean.a.numJovenes}" required="true"/>
+                <p:message for="jov" />
+                
+                 <p:outputLabel for="nu" value="Número Nuevos:"/>
+                 <p:inputText id="nu" value="#{asistenciasBean.a.totalAsistencia}" required="true"/>
+                <p:message for="nu" />
+                
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{asistenciasBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{asistenciasBean.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+    
+        
+   </ui:define>
+
+</ui:composition>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+   
+    <ui:define name="titulo">Grupos Trabajo</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{gruposTrabajoBean.grupostrabajo}" var="gtr" rowKey="#{gtr.codGrupoTrabajo}"  
+                     selection="#{gruposTrabajoBean.gtSeleccionado}" selectionMode="single" rendered="#{not (gruposTrabajoBean.enRegistro or gruposTrabajoBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{gruposTrabajoBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{gruposTrabajoBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de Grupos de Trabajo
+            </f:facet>
+            <p:column headerText="Descripción">
+                #{gtr.descripcion}
+            </p:column>
+            <p:column headerText="Estado">
+                #{gtr.activo}
+            </p:column>
+           
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{gruposTrabajoBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{gruposTrabajoBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{gruposTrabajoBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+        
+        <p:panel id="panelNuevo" header="Creación/Modificación de Grupos de Trabajo" rendered="#{(gruposTrabajoBean.enRegistro or gruposTrabajoBean.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="desc" value="Descripción:"/>
+                <p:inputText id="desc" value="#{gruposTrabajoBean.gto.descripcion}" required="true" label="Cédula" />
+                    
+                <p:message for="desc" />
+                
+                <p:outputLabel for="activo" value="Activo:"/>
+                <p:selectOneMenu value="#{gruposTrabajoBean.gto.activo}" id="activo" required="true">  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItem itemLabel="Activo" itemValue="Activo" />  
+                    <f:selectItem itemLabel="Inactivo" itemValue="Inactivo" />  
+                   
+                </p:selectOneMenu>    
+                <p:message for="activo" />
+                
+                
+                
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{gruposTrabajoBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{gruposTrabajoBean.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+    
+        
+   </ui:define>
+
+</ui:composition>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" 
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                template="/paginas/plantilla1.xhtml">
+
+   
+    <ui:define name="titulo">Ministerios</ui:define>
+
+    <ui:define name="contenido">
+        <p:dataTable id="tabla" value="#{ministeriosBean.ministerios}" var="ministerio" rowKey="#{ministerio.codMinisterio}"  
+                     selection="#{ministeriosBean.ministerioSeleccionado}" selectionMode="single" rendered="#{not (ministeriosBean.enRegistro or ministeriosBean.enEdicion)}"
+                     paginator="true" rows="10"  
+                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"  
+                 rowsPerPageTemplate="5,10,15">
+            <p:ajax event="rowSelect" listener="#{ministeriosBean.filaSeleccionada(evento)}" update="tabla"/>
+            <p:ajax event="rowUnselect" listener="#{ministeriosBean.filaSeleccionada(evento)}" update="tabla"/>
+            <f:facet name="header">
+                Administración de Ministerios
+            </f:facet>
+            <p:column headerText="Líder">
+                #{ministerio.codLider.codMiembro.nombreMiembro}
+            </p:column>
+            <p:column headerText="Nombre">
+                #{ministerio.nombreMinisterio}
+            </p:column>
+           
+            <f:facet name="footer">
+                <p:commandButton value="Nuevo" actionListener="#{ministeriosBean.nuevo(evento)}" update="@form" icon="ui-icon-disk"/>
+                <p:commandButton value="Modificar" actionListener="#{ministeriosBean.modificar(evento)}" update="@form" icon="ui-icon-pencil"/>
+                <p:commandButton value="Eliminar" actionListener="#{ministeriosBean.eliminar(evento)}" update="@form" icon="ui-icon-trash"/>
+            </f:facet>
+        </p:dataTable>
+        
+        <p:panel id="panelNuevo" header="Creación/Modificación de Ministerios" rendered="#{(ministeriosBean.enRegistro or ministeriosBean.enEdicion)}">
+            <p:panelGrid columns="3">
+                <p:outputLabel for="lider" value="Líder:"/>
+                <p:selectOneMenu id="lider" value="#{ministeriosBean.ccol}" effect="fade" required="true" >  
+                    <f:selectItem itemLabel="Select One" itemValue="" />  
+                    <f:selectItems value="#{ministeriosBean.cols}" var="cols" itemLabel="#{cols.codMiembro.nombreMiembro}" itemValue="#{cols.codColaborador}"/> 
+                </p:selectOneMenu>   
+                <p:message for="lider" />
+                
+                <p:outputLabel for="nombre" value="Nombre Ministerio:"/>
+                <p:inputText id="nombre" value="#{ministeriosBean.ministerio.nombreMinisterio}" required="true" label="Nombre"/>
+                    
+                <p:message for="nombre" />
+                
+                
+                
+            </p:panelGrid>
+            <p:commandButton value="Aceptar" actionListener="#{ministeriosBean.aceptar(evento)}" update="@form"/>
+            <p:commandButton value="Cancelar" actionListener="#{ministeriosBean.cancelar(evento)}" update="@form"/>
+        </p:panel>    
+    
+        
+   </ui:define>
+
+</ui:composition>
